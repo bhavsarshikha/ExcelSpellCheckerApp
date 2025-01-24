@@ -19,9 +19,11 @@ def correct_spelling(data):
 
 # Function to replace corrected words in the DataFrame
 def apply_corrections(data, corrections):
-    for col in data.select_dtypes(include=[object]).columns:
-        for wrong_word, correct_word in corrections.items():
-            data[col] = data[col].str.replace(f"\\b{wrong_word}\\b", correct_word, regex=True)
+    for wrong_word, correct_word in corrections.items():
+        if not isinstance(correct_word, str) or not correct_word.strip():
+            # Skip if the correction is empty or invalid
+            continue
+        data = data.applymap(lambda x: str(x).replace(wrong_word, correct_word) if isinstance(x, str) else x)
     return data
 
 # App Interface

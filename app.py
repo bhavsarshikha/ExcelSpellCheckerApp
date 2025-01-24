@@ -20,11 +20,12 @@ def correct_spelling(data):
 # Function to replace corrected words in the DataFrame
 def apply_corrections(data, corrections):
     for wrong_word, correct_word in corrections.items():
-        if not isinstance(correct_word, str) or not correct_word.strip():
-            # Skip if the correction is empty or invalid
+        if correct_word == "Do Not Correct" or not isinstance(correct_word, str) or not correct_word.strip():
+            # Skip correction, keep the original word
             continue
         data = data.applymap(lambda x: str(x).replace(wrong_word, correct_word) if isinstance(x, str) else x)
     return data
+
 
 # App Interface
 st.title("Excel Spelling Error Correction Tool")

@@ -2,10 +2,33 @@
  "cells": [
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 1,
    "id": "54b50197-1038-4309-8824-2684adeef9b1",
    "metadata": {},
-   "outputs": [],
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "2025-01-24 12:15:39.774 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+      "2025-01-24 12:15:40.173 \n",
+      "  \u001b[33m\u001b[1mWarning:\u001b[0m to view this Streamlit app on a browser, run it with the following\n",
+      "  command:\n",
+      "\n",
+      "    streamlit run C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\ipykernel_launcher.py [ARGUMENTS]\n",
+      "2025-01-24 12:15:40.174 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+      "2025-01-24 12:15:40.175 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+      "2025-01-24 12:15:40.176 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+      "2025-01-24 12:15:40.177 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+      "2025-01-24 12:15:40.177 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+      "2025-01-24 12:15:40.179 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+      "2025-01-24 12:15:40.179 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+      "2025-01-24 12:15:40.180 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+      "2025-01-24 12:15:40.182 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+      "2025-01-24 12:15:40.183 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n"
+     ]
+    }
+   ],
    "source": [
     "import streamlit as st\n",
     "import pandas as pd\n",
@@ -101,6 +124,14 @@
     "    else:\n",
     "        st.write(\"No spelling errors detected.\")\n"
    ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c368f89a-8164-4d99-b7f1-f6a206841da6",
+   "metadata": {},
+   "outputs": [],
+   "source": []
   }
  ],
  "metadata": {

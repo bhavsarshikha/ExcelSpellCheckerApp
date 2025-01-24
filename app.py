@@ -1,185 +1,63 @@
-{
- "cells": [
-  {
-   "cell_type": "code",
-   "execution_count": 9,
-   "id": "54b50197-1038-4309-8824-2684adeef9b1",
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "2025-01-24 12:54:36.449 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-01-24 12:54:36.450 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-01-24 12:54:36.451 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-01-24 12:54:36.451 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-01-24 12:54:36.453 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-01-24 12:54:36.454 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-01-24 12:54:36.454 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-01-24 12:54:36.455 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n"
-     ]
-    },
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "Current Working Directory: C:\\Users\\DELL\\OneDrive\\Desktop\\Spelling check\n"
-     ]
-    }
-   ],
-   "source": [
-    "import streamlit as st\n",
-    "import pandas as pd\n",
-    "from spellchecker import SpellChecker\n",
-    "import io\n",
-    "import os\n",
-    "import sys\n",
-    "import traceback\n",
-    "\n",
-    "class ExcelSpellChecker:\n",
-    "    def __init__(self):\n",
-    "        self.spell = SpellChecker()\n",
-    "        self.original_df = None\n",
-    "        self.corrections = {}\n",
-    "\n",
-    "    def load_excel(self, uploaded_file):\n",
-    "        \"\"\"Load Excel file and prepare for spell checking.\"\"\"\n",
-    "        try:\n",
-    "            self.original_df = pd.read_excel(uploaded_file)\n",
-    "            return self._find_spelling_errors()\n",
-    "        except Exception as e:\n",
-    "            st.error(f\"Error loading file: {e}\")\n",
-    "            return None\n",
-    "\n",
-    "    def _find_spelling_errors(self):\n",
-    "        \"\"\"Identify spelling errors across all text columns.\"\"\"\n",
-    "        errors = {}\n",
-    "        for col in self.original_df.select_dtypes(include=['object']).columns:\n",
-    "            col_errors = {}\n",
-    "            for idx, value in self.original_df[col].dropna().items():\n",
-    "                if isinstance(value, str):\n",
-    "                    words = str(value).split()\n",
-    "                    misspelled = self.spell.unknown(words)\n",
-    "                    if misspelled:\n",
-    "                        col_errors[idx] = {\n",
-    "                            'original': value,\n",
-    "                            'errors': {\n",
-    "                                word: self.spell.candidates(word) \n",
-    "                                for word in misspelled\n",
-    "                            }\n",
-    "                        }\n",
-    "            if col_errors:\n",
-    "                errors[col] = col_errors\n",
-    "        return errors\n",
-    "\n",
-    "    def apply_corrections(self, corrections):\n",
-    "        \"\"\"Apply user-selected corrections to the dataframe.\"\"\"\n",
-    "        corrected_df = self.original_df.copy()\n",
-    "        for col, col_corrections in corrections.items():\n",
-    "            for idx, correction_data in col_corrections.items():\n",
-    "                corrected_df.at[idx, col] = correction_data['corrected']\n",
-    "        return corrected_df\n",
-    "\n",
-    "def main():\n",
-    "    st.title(\"Excel Spell Checker\")\n",
-    "    \n",
-    "    # Print current working directory \n",
-    "    print(f\"Current Working Directory: {os.getcwd()}\")\n",
-    "    \n",
-    "    # Initialize spell checker\n",
-    "    if 'spell_checker' not in st.session_state:\n",
-    "        st.session_state.spell_checker = ExcelSpellChecker()\n",
-    "\n",
-    "    # File uploader\n",
-    "    uploaded_file = st.file_uploader(\"Upload Excel File\", type=['xlsx', 'xls'])\n",
-    "    \n",
-    "    if uploaded_file is not None:\n",
-    "        # Find spelling errors\n",
-    "        errors = st.session_state.spell_checker.load_excel(uploaded_file)\n",
-    "        \n",
-    "        if errors:\n",
-    "            # Display errors and allow corrections\n",
-    "            st.write(\"### Spelling Errors Found\")\n",
-    "            corrections = {}\n",
-    "            \n",
-    "            for col, col_errors in errors.items():\n",
-    "                st.write(f\"**Column: {col}**\")\n",
-    "                for idx, error_data in col_errors.items():\n",
-    "                    st.write(f\"Row {idx}: {error_data['original']}\")\n",
-    "                    \n",
-    "                    for word, suggestions in error_data['errors'].items():\n",
-    "                        st.write(f\"Misspelled word: {word}\")\n",
-    "                        \n",
-    "                        # Dropdown for correction\n",
-    "                        selected_correction = st.selectbox(\n",
-    "                            f\"Corrections for '{word}'\", \n",
-    "                            options=[word] + list(suggestions),\n",
-    "                            key=f\"{col}_{idx}_{word}\"\n",
-    "                        )\n",
-    "                        \n",
-    "                        # Store corrections\n",
-    "                        if col not in corrections:\n",
-    "                            corrections[col] = {}\n",
-    "                        corrections[col][idx] = {\n",
-    "                            'original': error_data['original'],\n",
-    "                            'corrected': error_data['original'].replace(word, selected_correction)\n",
-    "                        }\n",
-    "            \n",
-    "            # Apply corrections button\n",
-    "            if st.button(\"Apply Corrections\"):\n",
-    "                corrected_df = st.session_state.spell_checker.apply_corrections(corrections)\n",
-    "                \n",
-    "                # Download corrected file\n",
-    "                output = io.BytesIO()\n",
-    "                with pd.ExcelWriter(output, engine='xlsxwriter') as writer:\n",
-    "                    corrected_df.to_excel(writer, index=False)\n",
-    "                output.seek(0)\n",
-    "                \n",
-    "                st.download_button(\n",
-    "                    label=\"Download Corrected Excel File\",\n",
-    "                    data=output,\n",
-    "                    file_name=\"corrected_excel.xlsx\",\n",
-    "                    mime=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\"\n",
-    "                )\n",
-    "\n",
-    "if __name__ == \"__main__\":\n",
-    "    try:\n",
-    "        main()\n",
-    "    except Exception as e:\n",
-    "        print(f\"Unexpected error: {e}\")\n",
-    "        print(traceback.format_exc())\n",
-    "        st.error(f\"An unexpected error occurred: {e}\")"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "id": "fb58f9eb-cbd9-4fef-893d-31bda4008486",
-   "metadata": {},
-   "outputs": [],
-   "source": []
-  }
- ],
- "metadata": {
-  "kernelspec": {
-   "display_name": "Python 3 (ipykernel)",
-   "language": "python",
-   "name": "python3"
-  },
-  "language_info": {
-   "codemirror_mode": {
-    "name": "ipython",
-    "version": 3
-   },
-   "file_extension": ".py",
-   "mimetype": "text/x-python",
-   "name": "python",
-   "nbconvert_exporter": "python",
-   "pygments_lexer": "ipython3",
-   "version": "3.13.0"
-  }
- },
- "nbformat": 4,
- "nbformat_minor": 5
-}
+import streamlit as st
+import pandas as pd
+from spellchecker import SpellChecker
+from io import BytesIO
+
+# Function to process spelling corrections
+def correct_spelling(data):
+    spell = SpellChecker()
+    corrections = {}
+
+    # Identify misspelled words and suggest corrections
+    for col in data.select_dtypes(include=[object]).columns:
+        data[col] = data[col].astype(str)  # Ensure all text is treated as strings
+        misspelled = spell.unknown(" ".join(data[col]).split())
+        for word in misspelled:
+            corrections[word] = spell.candidates(word)
+
+    return corrections
+
+# Function to replace corrected words in the DataFrame
+def apply_corrections(data, corrections):
+    for col in data.select_dtypes(include=[object]).columns:
+        for wrong_word, correct_word in corrections.items():
+            data[col] = data[col].str.replace(f"\\b{wrong_word}\\b", correct_word, regex=True)
+    return data
+
+# App Interface
+st.title("Excel Spelling Error Correction Tool")
+
+uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
+if uploaded_file:
+    data = pd.read_excel(uploaded_file)
+    st.write("### Original File Data:")
+    st.dataframe(data)
+
+    corrections = correct_spelling(data)
+    st.write("### Identified Spelling Errors:")
+    if corrections:
+        correction_dict = {}
+        for word, suggestions in corrections.items():
+            st.write(f"Misspelled Word: `{word}`")
+            suggestion = st.selectbox(f"Select a correction for `{word}`", suggestions, key=word)
+            correction_dict[word] = suggestion
+
+        if st.button("Apply Corrections"):
+            updated_data = apply_corrections(data, correction_dict)
+            st.write("### Corrected Data:")
+            st.dataframe(updated_data)
+
+            # Save to Excel
+            output = BytesIO()
+            with pd.ExcelWriter(output, engine="openpyxl") as writer:
+                updated_data.to_excel(writer, index=False, sheet_name="Corrected Data")
+            output.seek(0)
+
+            st.download_button(
+                label="Download Corrected Excel File",
+                data=output,
+                file_name="corrected_file.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+    else:
+        st.write("No spelling errors found!")

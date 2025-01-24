@@ -2,7 +2,7 @@
  "cells": [
   {
    "cell_type": "code",
-   "execution_count": 8,
+   "execution_count": 9,
    "id": "54b50197-1038-4309-8824-2684adeef9b1",
    "metadata": {},
    "outputs": [
@@ -10,14 +10,14 @@
      "name": "stderr",
      "output_type": "stream",
      "text": [
-      "2025-01-24 12:35:26.972 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-01-24 12:35:26.973 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-01-24 12:35:26.974 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-01-24 12:35:26.975 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-01-24 12:35:26.976 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-01-24 12:35:26.977 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-01-24 12:35:26.977 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-01-24 12:35:26.978 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n"
+      "2025-01-24 12:54:36.449 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+      "2025-01-24 12:54:36.450 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+      "2025-01-24 12:54:36.451 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+      "2025-01-24 12:54:36.451 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+      "2025-01-24 12:54:36.453 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+      "2025-01-24 12:54:36.454 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+      "2025-01-24 12:54:36.454 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+      "2025-01-24 12:54:36.455 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n"
      ]
     },
     {
@@ -143,7 +143,6 @@
     "                    mime=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\"\n",
     "                )\n",
     "\n",
-    "# Global exception handling\n",
     "if __name__ == \"__main__\":\n",
     "    try:\n",
     "        main()\n",
